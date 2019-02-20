@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">SimpleAdapter</string>
+    <string name="txt_data">data</string>
+    <string name="txt_cliente">Cliente</string>
+    <string name="txt_id">ID</string>
+    <string name="txt_valor">Valor</string>
+    <string name="label_lista_de_pedidos">Lista de Pedidos</string>
+    <string name="label_lista_de_produtos">Lista de Produtos</string>
+    <string name="btn_add">ADD</string>
+</resources>
