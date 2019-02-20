@@ -7,4 +7,6 @@
     <string name="label_lista_de_pedidos">Lista de Pedidos</string>
     <string name="label_lista_de_produtos">Lista de Produtos</string>
     <string name="btn_add">ADD</string>
+    <string name="btn_deletar">Deletar</string>
+    <string name="btn_editar">EDITAR</string>
 </resources>

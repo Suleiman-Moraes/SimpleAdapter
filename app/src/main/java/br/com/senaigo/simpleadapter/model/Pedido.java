@@ -88,4 +88,15 @@ public class Pedido implements GetMap {
 
         return Objects.hash(id);
     }
+
+    @Override
+    public String toString() {
+        return "Pedido{" +
+                "id=" + id +
+                ", cliente='" + cliente + '\'' +
+                ", data='" + data + '\'' +
+                ", produtos=" + produtos +
+                ", valor=" + valor +
+                '}';
+    }
 }
