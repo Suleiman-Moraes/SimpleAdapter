@@ -1,7 +1,11 @@
 package br.com.senaigo.simpleadapter.model;
 
+import android.util.Log;
+
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -61,6 +65,9 @@ public class Pedido implements GetMap {
     }
 
     public List<Produto> getProdutos() {
+        if(produtos == null){
+            produtos = new LinkedList<>();
+        }
         return produtos;
     }
 
@@ -69,7 +76,17 @@ public class Pedido implements GetMap {
     }
 
     public BigDecimal getValor() {
+        if(valor == null){
+            valor = new BigDecimal(0);
+        }
         return valor;
+    }
+
+    public void addValor(BigDecimal valor){
+        if(this.valor == null){
+            this.valor = new BigDecimal(0);
+        }
+        this.valor = this.valor.add(valor);
     }
 
     public void setValor(BigDecimal valor) {

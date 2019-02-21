@@ -1,7 +1,10 @@
 package br.com.senaigo.simpleadapter.model;
 
+import android.util.Log;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import br.com.senaigo.simpleadapter.model.interfaces.GetMap;
 
@@ -30,6 +33,13 @@ public class Produto implements GetMap {
         return map;
     }
 
+    public void setMap(Map<String, Object> map) {
+        id = (Long) map.get("id");
+        nome = (String) map.get("nome");
+        descricao = (String) map.get("descricao");
+        preco = (Double) map.get("preco");
+    }
+
     public Long getId() {
         return id;
     }
@@ -49,9 +59,26 @@ public class Produto implements GetMap {
         this.descricao = descricao;
     }
     public Double getPreco() {
+        if(preco == null){
+            preco = 0.0;
+        }
         return preco;
     }
     public void setPreco(Double preco) {
         this.preco = preco;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Produto)) return false;
+        Produto produto = (Produto) o;
+        return Objects.equals(id, produto.id);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id);
     }
 }
