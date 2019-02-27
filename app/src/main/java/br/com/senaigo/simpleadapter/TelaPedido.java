@@ -3,9 +3,9 @@ package br.com.senaigo.simpleadapter;
 import android.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -40,7 +40,7 @@ public class TelaPedido extends AppCompatActivity {
 
     private List<Map<String, Object>> listPedidos;
     private List<Map<String, Object>> listProdutos;
-    private List<Map<String, Object>> listProdutosSelecionados;
+    private List<Produto> listProdutosSelecionados;
     private SimpleAdapter simpleAdapter;
 
     private Button deletar;
@@ -66,7 +66,7 @@ public class TelaPedido extends AppCompatActivity {
         produtosSelecionados = findViewById(R.id.listViewProdutosSelecionados);
         listProdutos = ListaProdutoUtil.getListMapProduto();
         listProdutosSelecionados = new LinkedList<>();
-        produtos.setAdapter(new SimpleAdapter(this, listProdutos, R.layout.item, new String[]{"preco", "nome"}, new int[]{R.id.textItemID, R.id.textItemNome}));
+        produtos.setAdapter(new SimpleAdapter(this, listProdutos, R.layout.item, new String[]{"preco", "nome"}, new int[]{R.id.txtItemId, R.id.txtItemNome}));
 
         acaoListViewPedido();
         acaoListViewProduto();
@@ -80,9 +80,7 @@ public class TelaPedido extends AppCompatActivity {
             if(listProdutosSelecionados.size() == 0){
                 throw new Exception("Selecione um produto!");
             }
-            for(Map<String, Object> x : listProdutosSelecionados){
-                Produto aux = new Produto();
-                aux.setMap(x);
+            for(Produto aux : listProdutosSelecionados){
                 pedido.getProdutos().add(aux);
                 pedido.addValor(new BigDecimal(aux.getPreco()));
             }
@@ -97,7 +95,7 @@ public class TelaPedido extends AppCompatActivity {
             }
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
             pedido.setData(simpleDateFormat.format(new Date()));
-            simpleAdapter = new SimpleAdapter(this, listPedidos, R.layout.item, new String[]{"id", "cliente"}, new int[]{R.id.textItemID, R.id.textItemNome});
+            simpleAdapter = new SimpleAdapter(this, listPedidos, R.layout.item, new String[]{"id", "cliente"}, new int[]{R.id.txtItemId, R.id.txtItemNome});
             listPedidos.add(pedido.getMap());
             pedidos.setAdapter(simpleAdapter);
             listProdutosSelecionados = new LinkedList<>();
@@ -114,7 +112,7 @@ public class TelaPedido extends AppCompatActivity {
 
     public void deletar(View view){
         listPedidos.remove(poss);
-        simpleAdapter = new SimpleAdapter(this, listPedidos, R.layout.item, new String[]{"id", "cliente"}, new int[]{R.id.textItemID, R.id.textItemNome});
+        simpleAdapter = new SimpleAdapter(this, listPedidos, R.layout.item, new String[]{"id", "cliente"}, new int[]{R.id.txtItemId, R.id.txtItemNome});
         pedidos.setAdapter(simpleAdapter);
         deletar.setEnabled(Boolean.FALSE);
         editar.setEnabled(Boolean.FALSE);
@@ -136,7 +134,7 @@ public class TelaPedido extends AppCompatActivity {
             listProdutosSelecionados = new LinkedList<>();
             listProdutos = ListaProdutoUtil.getListMapProduto();
             for (int i = 0; i < ((List)mapSelecionado.get("produtos")).size(); i++){
-                listProdutosSelecionados.add(((List<Produto>)mapSelecionado.get("produtos")).get(i).getMap());
+                listProdutosSelecionados.add(((List<Produto>)mapSelecionado.get("produtos")).get(i));
             }
             listProdutos.removeAll(listProdutosSelecionados);
             remotandoListProdutos();
@@ -170,7 +168,9 @@ public class TelaPedido extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Map<String, Object> map = listProdutos.get(position);
                 listProdutos.remove(position);
-                listProdutosSelecionados.add(map);
+                Produto aux = new Produto();
+                aux.setMap(map);
+                listProdutosSelecionados.add(aux);
                 remotandoListProdutos();
             }
         });
@@ -180,9 +180,9 @@ public class TelaPedido extends AppCompatActivity {
         produtosSelecionados.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Map<String, Object> map = listProdutosSelecionados.get(position);
+                Produto p = listProdutosSelecionados.get(position);
                 listProdutosSelecionados.remove(position);
-                listProdutos.add(map);
+                listProdutos.add(p.getMap());
                 remotandoListProdutos();
             }
         });
@@ -190,10 +190,11 @@ public class TelaPedido extends AppCompatActivity {
 
 
     private void remotandoListProdutos(){
-        SimpleAdapter simpleAdapter = new SimpleAdapter(this, listProdutos, R.layout.item, new String[]{"preco", "nome"}, new int[]{R.id.textItemID, R.id.textItemNome});
+        SimpleAdapter simpleAdapter = new SimpleAdapter(this, listProdutos, R.layout.item, new String[]{"preco", "nome"}, new int[]{R.id.txtItemId, R.id.txtItemNome});
         produtos.setAdapter(simpleAdapter);
-        SimpleAdapter simple = new SimpleAdapter(this, listProdutosSelecionados, R.layout.item, new String[]{"preco", "nome"}, new int[]{R.id.textItemID, R.id.textItemNome});
-        produtosSelecionados.setAdapter(simple);
+        ArrayAdapter<Produto> arrayAdapter = new ArrayAdapter<>(this, R.layout.item, listProdutosSelecionados);
+//        SimpleAdapter simple = new SimpleAdapter(this, listProdutosSelecionados, R.layout.item, new String[]{"preco", "nome"}, new int[]{R.id.textItemID, R.id.textItemNome});
+        produtosSelecionados.setAdapter(arrayAdapter);
     }
 
     private void limparCampos(){
@@ -215,7 +216,7 @@ public class TelaPedido extends AppCompatActivity {
             valorFinal = valorFinal.add((BigDecimal) map.get("valor"));
         }
         listPedidos = new LinkedList<>();
-        simpleAdapter = new SimpleAdapter(this, listPedidos, R.layout.item, new String[]{"id", "cliente"}, new int[]{R.id.textItemID, R.id.textItemNome});
+        simpleAdapter = new SimpleAdapter(this, listPedidos, R.layout.item, new String[]{"id", "cliente"}, new int[]{R.id.txtItemId, R.id.txtItemNome});
         pedidos.setAdapter(simpleAdapter);
         String texto = "Final dos trabalhos \nValor Final == R$: " + Math.round(valorFinal.doubleValue());
         AlertDialog alertDialog = new AlertDialog.Builder(this).create();
